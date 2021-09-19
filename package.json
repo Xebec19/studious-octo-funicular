@@ -1,0 +1,23 @@
+{
+  "name": "studious-octo-funicular",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xebec19/studious-octo-funicular.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xebec19/studious-octo-funicular/issues"
+  },
+  "homepage": "https://github.com/Xebec19/studious-octo-funicular#readme",
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}
