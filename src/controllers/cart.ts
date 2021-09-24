@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { executeSql } from "../utils/executeSql";
 import { findUserByToken } from "../utils/getUserFromToken";
 import { IResponseData } from "../utils/IResponseData";
-import { productDetail } from "./products";
 
 // Func to calc total
 const calcTotal = async(cartId:number|string) => {
@@ -115,8 +114,8 @@ export const addToCart = async (req: Request, res: Response) => {
       );
       const updatedQty = +cartDetailId.rows[0].quantity + qty;
       await executeSql(
-        `update bazaar_cart_details set quantity = $1, total = $2 where cd_id = $3`,
-        [updatedQty, product.rows[0].price * (qty + product.rows[0].quantity), cartDetailId.rows[0].cd_id]
+        `update bazaar_cart_details set quantity = $1 where cd_id = $2`,
+        [updatedQty, cartDetailId.rows[0].cd_id]
       );
     };
     await calcTotal(userCartId.rows[0].cart_id);
