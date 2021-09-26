@@ -38,14 +38,32 @@ export const editCart = async (req:Request, res:Response) => {
  * @type POST
  * @access PRIVATE
  * @route /cart/read_cart
+ * todo wip
  */
 export const readCart = async(req: Request, res: Response) => {
   let response: IResponseData;
-  const { userId } = req.body;
   try{
     let cartId;
-    
-  return cartId;
+    const token = req.headers['authorization'];
+    if(!token) throw new Error('Token not present');
+    const userId = await findUserByToken(token);
+    cartId = getCart(userId);
+    const cartDetails = await executeSql(`
+    SELECT CD_ID,
+    CART_ID,
+    PRODUCT_ID,
+    PRODUCT_PRICE,
+    QUANTITY,
+    DELIVERY_PRICE
+    FROM PUBLIC.BAZAAR_CART_DETAILS
+    WHERE CART_ID = $1;
+    `,[cartId]);
+  // return cartId;
+    response = {
+      message: "User's cart fetched",
+      status: true,
+      data: cartDetails
+    }
   }
   catch(error:any){
     response = {
@@ -68,7 +86,7 @@ export const addToCart = async (req: Request, res: Response) => {
   let response: IResponseData;
   const { productId, qty } = req.body;
   try {
-    const token = req.headers["authorization"]?.split(" ")[1];
+    const token = req.headers["authorization"];
     if (!token) throw new Error("token not present");
     if (!productId || !qty) throw new Error("Invalid Parameters");
     const userId = await findUserByToken(token);

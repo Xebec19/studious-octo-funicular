@@ -1,4 +1,4 @@
-import { dbQuery } from "../connections/database"
+import { dbQuery } from "../libs/database"
 
 export const executeSql = async(query:string,values:any = []) => {
     console.log('--SQL ',query);
