@@ -11,7 +11,7 @@ export const register = async(req:Request,res:Response) => {
     const {firstName,lastName,email,phone,password} = req.body;
     try{
         const {rows} = await executeSql('SELECT COUNT(USER_ID) FROM BAZAAR_USERS WHERE LOWER(EMAIL) = LOWER($1)',[email])
-        if(rows[0]){
+        if(rows[0].count > 0){
             throw new Error('User already exists');
         };
         await executeSql(`
