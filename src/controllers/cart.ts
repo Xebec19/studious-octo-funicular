@@ -3,7 +3,7 @@ import { calcTotal } from "../utils/calcTotal";
 import { executeSql } from "../utils/executeSql";
 import { getCart } from "../utils/getCart";
 import { findUserByToken } from "../utils/getUserFromToken";
-import { IResponseData } from "../utils/IResponseData";
+import { IResponseData } from "../models/IResponseData";
 
 /**
  * @type POST
@@ -135,7 +135,7 @@ export const removeItem = async (req: Request, res: Response) => {
       message: error.message,
       status: false,
     };
-    res.status(402).json(response).end();
+    res.status(406).json(response).end();
     return;
   }
 };

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../environment";
-import { IResponseData } from "../utils/IResponseData";
+import { IResponseData } from "../models/IResponseData";
 export const decodeToken = (
   req: Request,
   res: Response,
@@ -18,6 +18,7 @@ export const decodeToken = (
           throw new Error(err.message);
         }
         console.log(decoded); // bar
+        
         next();
       }
     );

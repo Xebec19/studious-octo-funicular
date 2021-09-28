@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { calcTotal } from "./calcTotal";
 import { executeSql } from "./executeSql";
-import { IResponseData } from "./IResponseData";
+import { IResponseData } from "../models/IResponseData";
 
 export const getCart = async (userId: number) => {
   try {

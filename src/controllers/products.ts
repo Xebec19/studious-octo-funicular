@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { executeSql } from "../utils/executeSql";
-import { IResponseData } from "../utils/IResponseData";
+import { IResponseData } from "../models/IResponseData";
 
 /**
  * @type POST
