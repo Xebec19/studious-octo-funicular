@@ -1,24 +1,72 @@
 import { Request, Response } from "express";
 import { IResponseData } from "../models/IResponseData";
 import { executeSql } from "../utils/executeSql";
-import { v1 as uuidv1 } from 'uuid';
+import { v1 as uuidv1 } from "uuid";
+import { findUserByToken } from "../utils/getUserFromToken";
+import { calcTotal } from "../utils/calcTotal";
 
 export const checkout = async (req: Request, res: Response) => {
   let response: IResponseData;
   try {
-    const token = req.headers['authorization']?.split(" ")[1];
-    const cartId = await executeSql(`
+    const token = req.headers["authorization"];
+    const userId = await findUserByToken(token);
+    const cartId = await executeSql(
+      `
       SELECT CART_ID
       FROM PUBLIC.BAZAAR_CARTS BC
       LEFT JOIN BAZAAR_USERS BU ON BU.USER_ID = BC.USER_ID
       WHERE BU.USER_ID =
-		  (SELECT USER_ID
-			FROM BAZAAR_TOKENS
-			WHERE TOKEN = '$1');
-      `,[token]);
-      const orderId = uuidv1();
-      
-      return;
+		  $1
+      `,
+      [userId]
+    );
+    const orderId = uuidv1();
+    await calcTotal(cartId.rows[0].cart_id);
+    const cartSummary = await executeSql(
+      `
+    SELECT cart_id, user_id, price, delivery_price,total
+	  FROM public.bazaar_carts WHERE cart_Id = $1;
+    `,
+      [cartId.rows[0].cart_id]
+    );
+    await executeSql(
+      `
+    INSERT INTO public.bazaar_order(
+      order_id, user_id, price, delivery_price, total)
+      VALUES ($1, $2, $3, $4, $5);
+    `,
+      [
+        orderId,
+        userId,
+        cartSummary.rows[0].price,
+        cartSummary.rows[0].delivery_price,
+        cartSummary.rows[0].total,
+      ]
+    );
+    const cartItems = await executeSql(
+      `SELECT cd_id, cart_id, product_id, product_price, quantity, delivery_price
+        FROM public.bazaar_cart_details WHERE cart_id = $1;`,
+      [cartId.rows[0].cart_id]
+    );
+    await Promise.all(
+      cartItems.rows.map(async (value: any, index: number) => {
+        return await executeSql(
+          `
+        INSERT INTO public.bazaar_order_details(
+          order_id, product_id, product_price, quantity, delivery_price)
+          VALUES ($1, $2, $3, $4, $5);
+        `,
+          [
+            orderId,
+            cartItems.rows[index].product_id,
+            cartItems.rows[index].product_price,
+            cartItems.rows[index].quantity,
+            cartItems.rows[index].delivery_price,
+          ]
+        );
+      })
+    );
+    return;
   } catch (error: any) {
     console.log(error.message);
     response = {
