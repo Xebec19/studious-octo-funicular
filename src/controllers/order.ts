@@ -1,15 +1,20 @@
 import { Request, Response } from "express";
 import { IResponseData } from "../models/IResponseData";
 import { executeSql } from "../utils/executeSql";
-import { v1 as uuidv1 } from "uuid";
 import { findUserByToken } from "../utils/getUserFromToken";
 import { calcTotal } from "../utils/calcTotal";
-
+import { nanoid } from 'nanoid/async'
+/**
+ * @type GET
+ * @access PRIVATE
+ * @route /order/checkout
+ */
 export const checkout = async (req: Request, res: Response) => {
   let response: IResponseData;
   try {
     const token = req.headers["authorization"];
     const userId = await findUserByToken(token);
+    await executeSql(`BEGIN`);
     const cartId = await executeSql(
       `
       SELECT CART_ID
@@ -20,7 +25,7 @@ export const checkout = async (req: Request, res: Response) => {
       `,
       [userId]
     );
-    const orderId = uuidv1();
+    const orderId = await (await nanoid(15)).toUpperCase();
     await calcTotal(cartId.rows[0].cart_id);
     const cartSummary = await executeSql(
       `
@@ -66,6 +71,19 @@ export const checkout = async (req: Request, res: Response) => {
         );
       })
     );
+    await executeSql(`
+    DELETE FROM public.bazaar_carts WHERE cart_id = $1;
+    `,[cartId.rows[0].cart_id]);
+    await executeSql(`
+    DELETE FROM public.bazaar_cart_details where cart_id = $1;
+    `,[cartId.rows[0].cart_id]);
+    await executeSql('COMMIT');
+    response = {
+      message: 'order generated',
+      status: true,
+      data: orderId
+    }
+    res.status(201).json(response).end();
     return;
   } catch (error: any) {
     console.log(error.message);
@@ -73,6 +91,7 @@ export const checkout = async (req: Request, res: Response) => {
       message: error.message,
       status: false,
     };
+    await executeSql(`ROLLBACK`);
     res.status(406).json(response).end();
     return;
   }

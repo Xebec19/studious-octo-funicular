@@ -25,6 +25,12 @@ export const editCart = async (req: Request, res: Response) => {
       [qty, cartDetailsId]
     );
     await calcTotal(cartId);
+    response = {
+      message: 'cart updated successfully',
+      status: true
+    }
+    res.status(201).json(response).end();
+    return;
   } catch (error: any) {
     response = {
       message: error.message,
