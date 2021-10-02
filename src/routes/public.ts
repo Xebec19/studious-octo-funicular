@@ -9,7 +9,7 @@ router.post("/register", async (req: Request, res: Response) =>
   register(req, res)
 );
 router.post("/login", async (req: Request, res: Response) => login(req, res));
-router.post("/fetchProducts", async (req: Request, res: Response) =>
+router.get("/fetchProducts", async (req: Request, res: Response) =>
   fetchProducts(req, res)
 );
 router.get("/productDetail", async (req: Request, res: Response) =>

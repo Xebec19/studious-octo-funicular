@@ -8,9 +8,9 @@ import { IResponseData } from "../models/IResponseData";
  */
 export const fetchProducts = async (req: Request, res: Response) => {
   let response: IResponseData;
-  const { limit } = req.body;
+  const limit = req.query.limit;
   try {
-    if (limit > 100 || !limit) throw new Error("Invalid limit");
+    if (+limit! > 100 || !limit) throw new Error("Invalid limit");
     const products = await executeSql(
       `
         SELECT PRODUCT_ID,
@@ -18,10 +18,8 @@ export const fetchProducts = async (req: Request, res: Response) => {
         PRODUCT_NAME,
         PRODUCT_IMAGE,
         QUANTITY,
-        CREATED_ON,
-        UPDATED_ON,
-        STATUS,
         PRICE,
+        (SELECT CATEGORY_NAME FROM BAZAAR_CATEGORIES WHERE CATEGORY_ID = CATEGORY_ID) AS CATEGORY_NAME,
         DELIVERY_PRICE,
         PRODUCT_DESC,
         GENDER
