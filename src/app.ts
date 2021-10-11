@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors())
 
-app.use("/public", updateLastAccess, require("./routes/public"));
+app.use("/public", require("./routes/public"));
 app.use("/cart", decodeToken, updateLastAccess, require("./routes/cart"));
 app.use("/order", decodeToken, updateLastAccess, require("./routes/order"));
 

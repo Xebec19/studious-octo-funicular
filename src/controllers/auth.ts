@@ -109,7 +109,7 @@ export const login = async (req: Request, res: Response) => {
       status: false,
       data: false,
     };
-    res.status(401).json(response).end();
+    res.status(408).json(response).end();
     return;
   }
 };
