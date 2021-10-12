@@ -28,7 +28,7 @@ export const register = async (req: Request, res: Response) => {
             PASSWORD)
             VALUES ($1, $2, $3, $4, $5) RETURNING USER_ID;
         `,
-      [firstName, lastName, email, phone, password]
+      [firstName, lastName, email, +phone, password]
     );
     const token = jwt.sign(
       {
