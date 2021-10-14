@@ -17,6 +17,15 @@ export const editCart = async (req: Request, res: Response) => {
     if (!cartDetailsId || !qty) {
       throw new Error("Incomplete parameters");
     }
+    const product = await executeSql(`
+    SELECT BP.QUANTITY
+    FROM PUBLIC.BAZAAR_CART_DETAILS BCD
+    LEFT JOIN BAZAAR_PRODUCTS BP ON BP.PRODUCT_ID = BCD.PRODUCT_ID
+    WHERE CD_ID = $1;
+    `,[cartDetailsId]);
+    if(+product.rows[0].quantity < +qty){
+      throw new Error(`Sorry, ${qty} units not available`)
+    }
     await executeSql(
       `
     UPDATE PUBLIC.BAZAAR_CART_DETAILS
