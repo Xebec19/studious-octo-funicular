@@ -26,9 +26,9 @@ export const editCart = async (req: Request, res: Response) => {
     );
     await calcTotal(cartId);
     response = {
-      message: 'cart updated successfully',
-      status: true
-    }
+      message: "cart updated successfully",
+      status: true,
+    };
     res.status(201).json(response).end();
     return;
   } catch (error: any) {
@@ -62,10 +62,14 @@ export const readCart = async (req: Request, res: Response) => {
     SELECT CD_ID,
     CART_ID,
     PRODUCT_ID,
+    (SELECT PRODUCT_NAME FROM BAZAAR_PRODUCTS BP WHERE BP.PRODUCT_ID = BCD.PRODUCT_ID) 
+    AS PRODUCT_NAME,
+    (SELECT PRODUCT_IMAGE FROM BAZAAR_PRODUCTS BP WHERE BP.PRODUCT_ID = BCD.PRODUCT_ID)
+    AS PRODUCT_IMAGE,
     PRODUCT_PRICE,
     QUANTITY,
     DELIVERY_PRICE
-    FROM PUBLIC.BAZAAR_CART_DETAILS
+    FROM PUBLIC.BAZAAR_CART_DETAILS BCD
     WHERE CART_ID = $1;
     `,
       [cartId]
@@ -178,9 +182,9 @@ export const addToCart = async (req: Request, res: Response) => {
       `WITH findCartDetail as (select (case 
       when count(cart_id) > 0 then 'Present' 
       when count(cart_id) = 0 then 'absent' END) status 
-  from bazaar_cart_details where cart_id = $1)
+  from bazaar_cart_details where cart_id = $1 and product_id = $2)
   SELECT * from findCartDetail;`,
-      [cartId]
+      [cartId, product.rows[0].product_id]
     );
     if (cartDetailsStatus.rows[0].status === "absent") {
       cartDetailId = await executeSql(

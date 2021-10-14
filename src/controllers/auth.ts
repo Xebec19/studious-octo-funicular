@@ -5,6 +5,33 @@ import jwt from "jsonwebtoken";
 import { jwtSecret } from "../environment";
 
 /**
+ * @route /public/logout
+ */
+export const logout = async (req: Request, res: Response) => {
+  let response: IResponseData;
+  try {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    await executeSql('DELETE FROM public.bazaar_tokens WHERE token = $1;',[`${token}`]);
+    response = {
+      message: "User logged out",
+      status: true,
+      data: true
+    }
+    res.status(201).json(response).end();
+    return;
+  } catch (error: any) {
+    console.log(error.message);
+    response = {
+      message: error.message,
+      status: false,
+      data: false,
+    };
+    res.status(401).json(response).end();
+    return;
+  }
+};
+
+/**
  * @route /public/register
  */
 export const register = async (req: Request, res: Response) => {

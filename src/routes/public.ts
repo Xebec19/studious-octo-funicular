@@ -1,6 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
-import { login, register } from "../controllers/auth";
+import { login, logout, register } from "../controllers/auth";
 import { fetchProducts, productDetail } from "../controllers/products";
 
 const router = express.Router();
@@ -15,5 +15,6 @@ router.get("/fetchProducts", async (req: Request, res: Response) =>
 router.get("/productDetail", async (req: Request, res: Response) =>
   productDetail(req, res)
 );
+router.get("/logout", async (req: Request, res: Response) => logout(req,res));
 
 module.exports = router;
