@@ -79,7 +79,7 @@ export const readCart = async (req: Request, res: Response) => {
     QUANTITY,
     DELIVERY_PRICE
     FROM PUBLIC.BAZAAR_CART_DETAILS BCD
-    WHERE CART_ID = $1;
+    WHERE CART_ID = $1 ORDER BY CD_ID;
     `,
       [cartId]
     );
