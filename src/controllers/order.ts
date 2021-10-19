@@ -3,7 +3,10 @@ import { IResponseData } from "../models/IResponseData";
 import { executeSql } from "../utils/executeSql";
 import { findUserByToken } from "../utils/getUserFromToken";
 import { calcTotal } from "../utils/calcTotal";
-import { nanoid } from 'nanoid/async'
+import { nanoid } from "nanoid/async";
+import instance from "../libs/razorInstance";
+import cryto from "crypto";
+import { razorSecret } from "../environment";
 /**
  * @type GET
  * @access PRIVATE
@@ -12,6 +15,17 @@ import { nanoid } from 'nanoid/async'
 export const checkout = async (req: Request, res: Response) => {
   let response: IResponseData;
   try {
+    const { razorpay_order_id, razorpay_signature, razorpay_payment_id } =
+      req.body;
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature)
+      throw new Error("Invalid arguments");
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const signature = cryto
+      .createHmac("sha256", `${razorSecret}`)
+      .update(body.toString())
+      .digest("hex");
+    if (signature !== razorpay_signature)
+      throw new Error("Signature did'nt match");
     const token = req.headers["authorization"];
     const userId = await findUserByToken(token);
     await executeSql(`BEGIN`);
@@ -71,18 +85,24 @@ export const checkout = async (req: Request, res: Response) => {
         );
       })
     );
-    await executeSql(`
+    await executeSql(
+      `
     DELETE FROM public.bazaar_carts WHERE cart_id = $1;
-    `,[cartId.rows[0].cart_id]);
-    await executeSql(`
+    `,
+      [cartId.rows[0].cart_id]
+    );
+    await executeSql(
+      `
     DELETE FROM public.bazaar_cart_details where cart_id = $1;
-    `,[cartId.rows[0].cart_id]);
-    await executeSql('COMMIT');
+    `,
+      [cartId.rows[0].cart_id]
+    );
+    await executeSql("COMMIT");
     response = {
-      message: 'order generated',
+      message: "order generated",
       status: true,
-      data: orderId
-    }
+      data: orderId,
+    };
     res.status(201).json(response).end();
     return;
   } catch (error: any) {
@@ -92,6 +112,36 @@ export const checkout = async (req: Request, res: Response) => {
       status: false,
     };
     await executeSql(`ROLLBACK`);
+    res.status(406).json(response).end();
+    return;
+  }
+};
+
+export const createOrder = async (req: Request, res: Response) => {
+  let response: IResponseData;
+  try {
+    const { amount } = req.body;
+    const options = {
+      amount: amount * 100,
+      currency: "INR",
+      receipt: await (await nanoid(15)).toUpperCase(),
+    };
+    const order = await instance.orders.create(options);
+    if (!!!order) throw new Error("--error while creating order");
+    response = {
+      message: "Order created",
+      status: true,
+      data: order,
+    };
+    res.status(201).json(response).end();
+    return;
+  } catch (error: any) {
+    console.log(error.message);
+    console.log(error);
+    response = {
+      message: error.message,
+      status: false,
+    };
     res.status(406).json(response).end();
     return;
   }
