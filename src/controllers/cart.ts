@@ -17,14 +17,18 @@ export const editCart = async (req: Request, res: Response) => {
     if (!cartDetailsId || !qty) {
       throw new Error("Incomplete parameters");
     }
-    const product = await executeSql(`
-    SELECT BP.QUANTITY
+    const product = await executeSql(
+      `
+    SELECT BP.QUANTITY AS PRODUCT_QUANTITY,BCD.QUANTITY,BP.PRODUCT_ID
     FROM PUBLIC.BAZAAR_CART_DETAILS BCD
     LEFT JOIN BAZAAR_PRODUCTS BP ON BP.PRODUCT_ID = BCD.PRODUCT_ID
     WHERE CD_ID = $1;
-    `,[cartDetailsId]);
-    if(+product.rows[0].quantity < +qty){
-      throw new Error(`Sorry, ${qty} units not available`)
+    `,
+      [cartDetailsId]
+    );
+
+    if (+product.rows[0].quantity + +product.rows[0].product_quantity < +qty) {
+      throw new Error(`Sorry, ${qty} units not available`);
     }
     await executeSql(
       `
@@ -32,6 +36,16 @@ export const editCart = async (req: Request, res: Response) => {
     SET QUANTITY = $1
     WHERE CD_ID = $2;`,
       [qty, cartDetailsId]
+    );
+    await executeSql(
+      `
+      UPDATE bazaar_products SET QUANTITY = $1 
+      WHERE PRODUCT_ID = $2;
+      `,
+      [
+        product.rows[0].quantity + product.rows[0].product_quantity - qty,
+        product.rows[0].product_id,
+      ]
     );
     await calcTotal(cartId);
     response = {
@@ -129,10 +143,16 @@ export const removeItem = async (req: Request, res: Response) => {
     const userId = await findUserByToken(token);
     const checkCart = await executeSql(
       `
-    SELECT BCD.CD_ID FROM BAZAAR_CART_DETAILS BCD LEFT JOIN BAZAAR_CARTS BC ON BC.CART_ID = BCD.CART_ID LEFT JOIN BAZAAR_USERS BU ON BC.USER_ID = BU.USER_ID  
+    SELECT BCD.CD_ID,BCD.PRODUCT_ID,BCD.QUANTITY FROM BAZAAR_CART_DETAILS BCD LEFT JOIN BAZAAR_CARTS BC ON BC.CART_ID = BCD.CART_ID LEFT JOIN BAZAAR_USERS BU ON BC.USER_ID = BU.USER_ID  
     WHERE BU.USER_ID = $1 AND BC.CART_ID = $2 AND BCD.CD_ID = $3;
     `,
       [userId, cartId, cartDetailsId]
+    );
+    await executeSql(
+      `
+    UPDATE BAZAAR_PRODUCTS SET QUANTITY = QUANTITY + $1 WHERE PRODUCT_ID = $2;
+    `,
+      [checkCart.rows[0].quantity, checkCart.rows[0].product_id]
     );
     if (!checkCart.rows[0].cd_id) throw new Error("Cart not found");
     await executeSql(
@@ -219,11 +239,15 @@ export const addToCart = async (req: Request, res: Response) => {
         [updatedQty, cartDetailId.rows[0].cd_id]
       );
     }
+    await executeSql(
+      `update bazaar_products set quantity = $1 where product_id = $2`,
+      [product.rows[0].quantity - qty, product.rows[0].product_id]
+    );
     await calcTotal(cartId);
     response = {
       message: "Product added to cart successfully",
       status: true,
-      data: cartDetailId.rows[0].cd_id,
+      data: product.rows[0].quantity - qty,
     };
     res.status(201).json(response).end;
     return;

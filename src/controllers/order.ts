@@ -8,16 +8,16 @@ import instance from "../libs/razorInstance";
 import cryto from "crypto";
 import { razorSecret } from "../environment";
 /**
- * @type GET
+ * @type POST
  * @access PRIVATE
  * @route /order/checkout
  */
 export const checkout = async (req: Request, res: Response) => {
   let response: IResponseData;
   try {
-    const { razorpay_order_id, razorpay_signature, razorpay_payment_id } =
+    const { razorpay_order_id, razorpay_signature, razorpay_payment_id, email, address } =
       req.body;
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature)
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !email || !address)
       throw new Error("Invalid arguments");
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const signature = cryto
@@ -51,8 +51,8 @@ export const checkout = async (req: Request, res: Response) => {
     await executeSql(
       `
     INSERT INTO public.bazaar_order(
-      order_id, user_id, price, delivery_price, total)
-      VALUES ($1, $2, $3, $4, $5);
+      order_id, user_id, price, delivery_price, total, email, address)
+      VALUES ($1, $2, $3, $4, $5, $6, $7);
     `,
       [
         orderId,
@@ -60,6 +60,8 @@ export const checkout = async (req: Request, res: Response) => {
         cartSummary.rows[0].price,
         cartSummary.rows[0].delivery_price,
         cartSummary.rows[0].total,
+        email,
+        address
       ]
     );
     const cartItems = await executeSql(
