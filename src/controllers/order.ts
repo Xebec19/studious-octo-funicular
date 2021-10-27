@@ -48,22 +48,23 @@ export const checkout = async (req: Request, res: Response) => {
     `,
       [cartId.rows[0].cart_id]
     );
-    await executeSql(
+    const orderDetails = await executeSql(
       `
     INSERT INTO public.bazaar_order(
       order_id, user_id, price, delivery_price, total, email, address)
-      VALUES ($1, $2, $3, $4, $5, $6, $7);
+      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING order_id;
     `,
       [
         orderId,
         userId,
-        cartSummary.rows[0].price,
-        cartSummary.rows[0].delivery_price,
-        cartSummary.rows[0].total,
+        +cartSummary.rows[0].price,
+        +cartSummary.rows[0].delivery_price,
+        +cartSummary.rows[0].total,
         email,
         address
       ]
     );
+    console.log(orderDetails.rows);
     const cartItems = await executeSql(
       `SELECT cd_id, cart_id, product_id, product_price, quantity, delivery_price
         FROM public.bazaar_cart_details WHERE cart_id = $1;`,
@@ -78,11 +79,11 @@ export const checkout = async (req: Request, res: Response) => {
           VALUES ($1, $2, $3, $4, $5);
         `,
           [
-            orderId,
+            orderDetails.rows[0].order_id,
             cartItems.rows[index].product_id,
-            cartItems.rows[index].product_price,
+            +cartItems.rows[index].product_price,
             cartItems.rows[index].quantity,
-            cartItems.rows[index].delivery_price,
+            +cartItems.rows[index].delivery_price,
           ]
         );
       })
