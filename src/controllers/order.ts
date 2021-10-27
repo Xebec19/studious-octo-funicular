@@ -79,7 +79,7 @@ export const checkout = async (req: Request, res: Response) => {
           VALUES ($1, $2, $3, $4, $5);
         `,
           [
-            orderDetails.rows[0].orderId,
+            orderDetails.rows[0].order_id,
             cartItems.rows[index].product_id,
             +cartItems.rows[index].product_price,
             cartItems.rows[index].quantity,
