@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "nodemon"
+    "start:dev": "nodemon",
+    "create-database": "psql -U postgres < schema.sql",
+    "seed": "node ./src/controllers/misl.ts"
   },
   "repository": {
     "type": "git",
@@ -26,15 +28,22 @@
   "dependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/faker": "^5.5.9",
     "@types/jsonwebtoken": "^8.5.5",
+    "@types/minimist": "^1.2.2",
     "@types/pg": "^8.6.1",
+    "@types/validator": "^13.6.5",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "faker": "^5.5.3",
+    "fast-csv": "^4.3.6",
     "jsonwebtoken": "^8.5.1",
+    "minimist": "^1.2.5",
     "nanoid": "^3.1.28",
     "pg": "^8.7.1",
     "pg-cursor": "^2.7.1",
-    "razorpay": "^2.0.7"
+    "razorpay": "^2.0.7",
+    "validator": "^13.6.0"
   }
 }
