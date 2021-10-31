@@ -3,10 +3,16 @@ import cors from "cors";
 import express from "express";
 import { decodeToken } from "./libs/decodeToken";
 import { updateLastAccess } from "./utils/updateLastAccess";
-import { seed } from "./controllers/misl";
+import { seedingFunc } from "./controllers/misl";
 
 const app = express();
 const port = process.env.port || 3001;
+
+const argv = parseArgs(process.argv.slice(2)).seed || false;
+console.log('--seeding enabled : ',argv);
+if(argv){
+  seedingFunc();
+}
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());

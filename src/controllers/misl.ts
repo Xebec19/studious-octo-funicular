@@ -1,56 +1,77 @@
-import { executeSql } from "../utils/executeSql";
-import fastcsv from "fast-csv";
 import faker from "faker";
-import fs from "fs";
-import parseArgs from "minimist";
-import contains from "validator/lib/contains";
+import fs from 'fs';
 
-const args = parseArgs(process.argv.slice(2));
-
-const output = "./../assets/output.csv";
-
-const stream = fs.createWriteStream(output);
-
-const categoryTranslation = () => {
+const categoryTranslation = async () => {
   const categoryName = faker.music.genre();
-  const createdOn = faker.date.recent();
-  return `${categoryName},${createdOn}\n`;
+  const createdOn = faker.date.recent().toLocaleDateString();
+  return `'${categoryName}','${createdOn}','active'`;
 };
 
-const writeToCsvFile = async () => {
-  let rows = args["rows"] || 10;
-  for (let index = 0; index < rows; index++) {
-    stream.write(categoryTranslation(), "utf-8");
+const productTranslation = async () => {
+  const productName = faker.commerce.productName();
+  const quantity = faker.datatype.number();
+  const productImage = faker.image.fashion();
+  const price = faker.finance.amount();
+  const deliveryPrice = faker.finance.amount();
+  const productDesc = faker.lorem.paragraph();
+  const gender = faker.name.gender();
+  const createdOn = faker.date.past().toLocaleDateString();
+  const updatedOn = faker.date.recent().toLocaleDateString();
+  return `'${productName}','${productImage}',${quantity},'${createdOn}','${updatedOn}','${+Math.random().toFixed(1) > 0.6 ? 'active' : 'unactive'}',${price},${deliveryPrice},'${productDesc}','${gender}',1`
+}
+
+const createCategoryData = async () => {
+  return `INSERT INTO bazaar_categories
+  (category_name, created_on, status)
+  VALUES(${await categoryTranslation()});
+  `;
+};
+
+const createProductData = async () => {
+  return `INSERT INTO bazaar_products
+  (category_id, product_name, product_image, quantity, created_on, updated_on, status, price, delivery_price, product_desc, gender, country_id)
+  VALUES(${+Math.random().toFixed(1)*10+1},${await productTranslation()});
+  `;
+};
+
+const seeding = new Promise(async (resolve, reject) => {
+  try {
+    var categoryScript = '';
+    var productScript = '';
+    for (let i = 0; i < 10; i++) {
+      categoryScript += await createCategoryData();
+    }
+    for (let i = 0; i < 100; i++) {
+      productScript += await createProductData();
+    }
+    resolve({ categoryScript, productScript });
   }
-  stream.end();
-};
+  catch (error: any) {
+    console.log('--error ', error.stack);
+    reject();
+  }
+});
 
-const insertFromCsv = async () => {
-  let csvData: any[] = [];
-  return fastcsv
-    .parse()
-    .validate((data: any) => !contains(data[0], ","))
-    .on("data", (data) => {
-      csvData.push(data);
-    })
-    .on("data-invalid", (row, rowNumber) => {
-      console.log(
-        `Invalid [rowNumber=${rowNumber}] [row=${JSON.stringify(row)}]`
-      );
-    })
-    .on("end", () => {
-      const query =
-        "INSERT INTO BAZAAR_CATEGORIES (CATEGORY_NAME,CREATED_ON) VALUES ($1,$2)";
-      Promise.all([
-        csvData.forEach(async (row) => {
-          return await executeSql(query, row);
-        }),
-      ]);
+export const seedingFunc = () => {
+  console.log('--seeding started');
+  seeding.then((data: any) => {
+    fs.writeFile('src/assets/seeding/category.sql', data.categoryScript, (err) => {
+      if (err) {
+        console.error(err);
+        throw new Error(err.message);
+      }
     });
-};
-
-export const seed = async () => {
-  await writeToCsvFile();
-  let stream = fs.createReadStream(output);
-  stream.pipe(await insertFromCsv());
+    fs.writeFile('src/assets/seeding/product.sql', data.productScript, (err) => {
+      if (err) {
+        console.error(err);
+        throw new Error(err.message);
+      }
+    });
+    // console.log(data.categoryScript);
+    // console.log(data.productScript);
+    console.log('--seeding completed');
+  }).catch((error: any) => {
+    console.log('--error ', error.stack);
+    console.log('--seeding stopped');
+  });
 };
