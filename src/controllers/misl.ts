@@ -14,7 +14,7 @@ const productTranslation = async () => {
   const price = faker.finance.amount();
   const deliveryPrice = faker.finance.amount();
   const productDesc = faker.lorem.paragraph();
-  const gender = faker.name.gender();
+  const gender = +Math.random().toFixed(1) > 0.6 ? 'Male' : 'Female';
   const createdOn = faker.date.past().toLocaleDateString();
   const updatedOn = faker.date.recent().toLocaleDateString();
   return `'${productName}','${productImage}',${quantity},'${createdOn}','${updatedOn}','${+Math.random().toFixed(1) > 0.6 ? 'active' : 'unactive'}',${price},${deliveryPrice},'${productDesc}','${gender}',1`
@@ -67,8 +67,6 @@ export const seedingFunc = () => {
         throw new Error(err.message);
       }
     });
-    // console.log(data.categoryScript);
-    // console.log(data.productScript);
     console.log('--seeding completed');
   }).catch((error: any) => {
     console.log('--error ', error.stack);

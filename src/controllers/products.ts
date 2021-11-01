@@ -19,7 +19,6 @@ export const fetchProducts = async (req: Request, res: Response) => {
         PRODUCT_IMAGE,
         QUANTITY,
         PRICE,
-        (SELECT CATEGORY_NAME FROM BAZAAR_CATEGORIES WHERE CATEGORY_ID = CATEGORY_ID) AS CATEGORY_NAME,
         DELIVERY_PRICE,
         PRODUCT_DESC,
         GENDER
@@ -93,3 +92,28 @@ export const productDetail = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export const fetchCategories = async(req: Request, res: Response) => {
+  let response: IResponseData;
+  try{
+    const categories = await executeSql(`
+    select distinct on (bp.category_id) bp.category_id,
+    bc.category_name ,
+    bp.product_id,bp.product_name ,bp.product_image 
+    from bazaar_products bp 
+    left join bazaar_categories bc 
+    on bc.category_id = bp.category_id 
+    order by category_id;
+    `)
+  }
+  catch(error:any){
+    console.log('--error ',error.stack);
+    response = {
+      message: error.message,
+      status: false,
+      data: false
+    }
+    res.status(401).json(response).end();
+    return;
+  }
+}
