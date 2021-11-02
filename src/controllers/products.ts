@@ -93,18 +93,29 @@ export const productDetail = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @type GET
+ * @route /public/category
+ */
 export const fetchCategories = async(req: Request, res: Response) => {
   let response: IResponseData;
   try{
-    const categories = await executeSql(`
-    select distinct on (bp.category_id) bp.category_id,
+    let sql = req.query.includeImg ? `select distinct on (bp.category_id) bp.category_id,
     bc.category_name ,
     bp.product_id,bp.product_name ,bp.product_image 
     from bazaar_products bp 
     left join bazaar_categories bc 
     on bc.category_id = bp.category_id 
-    order by category_id;
-    `)
+    order by category_id;` : 'select category_id,category_name from bazaar_categories order by category_id';
+
+    const categories = await executeSql(sql);
+    response = {
+      message: 'categories fetched successfully',
+      status: true,
+      data: categories.rows
+    }
+    res.status(201).json(response).end();
+    return;
   }
   catch(error:any){
     console.log('--error ',error.stack);

@@ -1,7 +1,11 @@
 import express from "express";
 import { Request, Response } from "express";
 import { login, logout, register } from "../controllers/auth";
-import { fetchProducts, productDetail } from "../controllers/products";
+import {
+  fetchCategories,
+  fetchProducts,
+  productDetail,
+} from "../controllers/products";
 
 const router = express.Router();
 
@@ -14,6 +18,9 @@ router.get("/fetchProducts", async (req: Request, res: Response) =>
 );
 router.get("/productDetail", async (req: Request, res: Response) =>
   productDetail(req, res)
+);
+router.get("/category", async (req: Request, res: Response) =>
+  fetchCategories(req, res)
 );
 router.get("/logout", async (req: Request, res: Response) => logout(req, res));
 
