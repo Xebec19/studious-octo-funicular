@@ -23,6 +23,7 @@ export const fetchProducts = async (req: Request, res: Response) => {
         PRODUCT_DESC,
         GENDER
         FROM PUBLIC.BAZAAR_PRODUCTS
+        ORDER BY RANDOM()
         LIMIT($1);
         `,
       [limit]
