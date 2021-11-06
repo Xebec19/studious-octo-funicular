@@ -10,24 +10,32 @@ export const fetchProducts = async (req: Request, res: Response) => {
   let response: IResponseData;
   const limit = req.query.limit;
   try {
+    const filter = req.query.filter;
     if (+limit! > 100 || !limit) throw new Error("Invalid limit");
-    const products = await executeSql(
-      `
-        SELECT PRODUCT_ID,
-        CATEGORY_ID,
-        PRODUCT_NAME,
-        PRODUCT_IMAGE,
-        QUANTITY,
-        PRICE,
-        DELIVERY_PRICE,
-        PRODUCT_DESC,
-        GENDER
-        FROM PUBLIC.BAZAAR_PRODUCTS
-        ORDER BY RANDOM()
-        LIMIT($1);
-        `,
-      [limit]
-    );
+    let url = "";
+    let filterText = "";
+    switch (filter) {
+      case "trending":
+        filterText += " ORDER BY ";
+        break;
+      default:
+        filterText += " ORDER BY RANDOM() ";
+        break;
+    }
+    url =
+      `SELECT PRODUCT_ID,
+      CATEGORY_ID,
+      PRODUCT_NAME,
+      PRODUCT_IMAGE,
+      QUANTITY,
+      PRICE,
+      DELIVERY_PRICE,
+      PRODUCT_DESC,
+      GENDER
+      FROM PUBLIC.BAZAAR_PRODUCTS` +
+      filterText +
+      ` LIMIT($1);`;
+    const products = await executeSql(url, [limit]);
     if (!products.rows[0]) throw new Error("No products available");
     response = {
       message: "Products fetched successfully",
@@ -98,34 +106,35 @@ export const productDetail = async (req: Request, res: Response) => {
  * @type GET
  * @route /public/category
  */
-export const fetchCategories = async(req: Request, res: Response) => {
+export const fetchCategories = async (req: Request, res: Response) => {
   let response: IResponseData;
-  try{
-    let sql = req.query.includeImg ? `select distinct on (bp.category_id) bp.category_id,
+  try {
+    let sql = req.query.includeImg
+      ? `select distinct on (bp.category_id) bp.category_id,
     bc.category_name ,
     bp.product_id,bp.product_name ,bp.product_image 
     from bazaar_products bp 
     left join bazaar_categories bc 
     on bc.category_id = bp.category_id 
-    order by category_id;` : 'select category_id,category_name from bazaar_categories order by category_id';
+    order by category_id;`
+      : "select category_id,category_name from bazaar_categories order by category_id";
 
     const categories = await executeSql(sql);
     response = {
-      message: 'categories fetched successfully',
+      message: "categories fetched successfully",
       status: true,
-      data: categories.rows
-    }
+      data: categories.rows,
+    };
     res.status(201).json(response).end();
     return;
-  }
-  catch(error:any){
-    console.log('--error ',error.stack);
+  } catch (error: any) {
+    console.log("--error ", error.stack);
     response = {
       message: error.message,
       status: false,
-      data: false
-    }
+      data: false,
+    };
     res.status(401).json(response).end();
     return;
   }
-}
+};
