@@ -2,3 +2,4 @@ node_modules
 build
 .env
 src/assets/seeding
+environment.ts
