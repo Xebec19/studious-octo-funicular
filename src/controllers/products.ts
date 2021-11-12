@@ -18,6 +18,9 @@ export const fetchProducts = async (req: Request, res: Response) => {
       case "trending":
         filterText += " ORDER BY ";
         break;
+      case "category":
+        filterText += ` WHERE category_id = ${req.query.categoryId ?? 0} `;
+        break;
       default:
         filterText += " ORDER BY RANDOM() ";
         break;
