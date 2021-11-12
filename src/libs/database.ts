@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import { dbDatabase, dbHost, dbPassword, dbPort, dbUser } from "../environment";
+// import { dbDatabase, dbHost, dbPassword, dbPort, dbUser } from "../environment";
 const { Pool } = require("pg");
 // const config = {
 //   user: `${dbUser}`,
