@@ -13,13 +13,10 @@ export const fetchProducts = async (req: Request, res: Response) => {
     const filter = req.query.filter;
     if (+limit! > 100 || !limit) throw new Error("Invalid limit");
     let url = "";
-    let filterText = "";
+    let filterText = " WHERE status = 'active' AND quantity > 0 ";
     switch (filter) {
-      case "trending":
-        filterText += " ORDER BY ";
-        break;
       case "category":
-        filterText += ` WHERE category_id = ${req.query.categoryId ?? 0} `;
+        filterText += ` AND category_id = ${req.query.categoryId ?? 0} `;
         break;
       default:
         filterText += " ORDER BY RANDOM() ";
@@ -33,9 +30,8 @@ export const fetchProducts = async (req: Request, res: Response) => {
       QUANTITY,
       PRICE,
       DELIVERY_PRICE,
-      PRODUCT_DESC,
-      GENDER
-      FROM PUBLIC.BAZAAR_PRODUCTS` +
+      PRODUCT_DESC
+      FROM PUBLIC.BAZAAR_PRODUCTS ` +
       filterText +
       ` LIMIT($1);`;
     const products = await executeSql(url, [limit]);
@@ -78,8 +74,7 @@ export const productDetail = async (req: Request, res: Response) => {
         STATUS,
         PRICE,
         DELIVERY_PRICE,
-        PRODUCT_DESC,
-        GENDER
+        PRODUCT_DESC
         FROM PUBLIC.BAZAAR_PRODUCTS
         WHERE PRODUCT_ID = $1;
         `,

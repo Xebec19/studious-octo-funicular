@@ -194,7 +194,7 @@ export const addToCart = async (req: Request, res: Response) => {
     const userId = await findUserByToken(token);
     if (!userId) throw new Error("No user found");
     let product = await executeSql(
-      `SELECT product_id, category_id, product_name, product_image, quantity, created_on, updated_on, status, price, delivery_price, product_desc, gender
+      `SELECT product_id, category_id, product_name, product_image, quantity, created_on, updated_on, status, price, delivery_price, product_desc
         FROM public.bazaar_products where product_id = $1 and status = 'active'`,
       [productId]
     );
