@@ -6,7 +6,7 @@ import { updateLastAccess } from "./utils/updateLastAccess";
 import { seedingFunc } from "./controllers/misl";
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 4001;
 
 const argv = parseArgs(process.argv.slice(2)).seed || false;
 console.log('--seeding enabled : ',argv);

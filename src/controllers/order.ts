@@ -64,7 +64,6 @@ export const checkout = async (req: Request, res: Response) => {
         address
       ]
     );
-    console.log(orderDetails.rows);
     const cartItems = await executeSql(
       `SELECT cd_id, cart_id, product_id, product_price, quantity, delivery_price
         FROM public.bazaar_cart_details WHERE cart_id = $1;`,
