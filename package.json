@@ -2,12 +2,14 @@
   "name": "studious-octo-funicular",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon",
+    "test": "jest --config=src/jest.config.js",
+    "build": "rimraf build && npx tsc",
+    "start:dev": "nodemon",
+    "start": "npm run build && node build/server.js",
     "create-database": "psql -U postgres < schema.sql",
-    "seed": "ts-node ./src/app.ts --seed=true"
+    "seed": "ts-node ./src/server.ts --seed=true"
   },
   "repository": {
     "type": "git",
@@ -29,6 +31,7 @@
     "@types/minimist": "^1.2.2",
     "@types/pg": "^8.6.1",
     "@types/speakeasy": "^2.0.6",
+    "@types/supertest": "^2.0.11",
     "@types/validator": "^13.6.5",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -43,9 +46,17 @@
     "pg": "^8.7.1",
     "pg-cursor": "^2.7.1",
     "razorpay": "^2.0.7",
+    "rimraf": "^3.0.2",
     "speakeasy": "^2.0.0",
     "ts-node": "^10.2.1",
-    "typescript": "^4.4.3",
     "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "@types/rimraf": "^3.0.2",
+    "jest": "^27.4.7",
+    "supertest": "^6.1.6",
+    "ts-jest": "^27.1.2",
+    "typescript": "^4.5.4"
   }
 }

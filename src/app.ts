@@ -6,7 +6,6 @@ import { updateLastAccess } from "./utils/updateLastAccess";
 import { seedingFunc } from "./controllers/misl";
 
 const app = express();
-const port = process.env.PORT || 4001;
 
 const argv = parseArgs(process.argv.slice(2)).seed || false;
 console.log('--seeding enabled : ',argv);
@@ -22,6 +21,4 @@ app.use("/public", require("./routes/public"));
 app.use("/cart", decodeToken, updateLastAccess, require("./routes/cart"));
 app.use("/order", decodeToken, updateLastAccess, require("./routes/order"));
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
+export default app;
