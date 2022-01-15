@@ -7,7 +7,7 @@ import {
   productDetail,
 } from "../controllers/products";
 
-const router = express.Router();
+const router = express.Router(); 
 
 router.post("/register", async (req: Request, res: Response) =>
   register(req, res)
