@@ -2,11 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type":"Launch Program",
-            "program": "${workspaceFolder}/src/app.ts",
+            "name":"Debug",
+            "type":"node",
+            "request": "attach",
+            "program": "${workspaceFolder}/src/index.ts",
             "restart": true,
             "runtimeExecutable": "nodemon",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "processId": "${command:PickProcess}"
         }
     ]
 }
