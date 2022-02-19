@@ -28,7 +28,7 @@ export const checkout = async (req: Request, res: Response) => {
       throw new Error("Signature did'nt match");
     const token = req.headers["authorization"];
     const userId = await findUserByToken(token);
-    await executeSql(`BEGIN`);
+    //await executeSql(`BEGIN`);
     const cartId = await executeSql(
       `
       SELECT CART_ID
@@ -55,7 +55,7 @@ export const checkout = async (req: Request, res: Response) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING order_id;
     `,
       [
-        orderId,
+        orderId + '',
         userId,
         +cartSummary.rows[0].price,
         +cartSummary.rows[0].delivery_price,
@@ -69,51 +69,53 @@ export const checkout = async (req: Request, res: Response) => {
         FROM public.bazaar_cart_details WHERE cart_id = $1;`,
       [cartId.rows[0].cart_id]
     );
-    await Promise.all(
-      cartItems.rows.map(async (value: any, index: number) => {
-        return await executeSql(
-          `
-        INSERT INTO public.bazaar_order_details(
-          order_id, product_id, product_price, quantity, delivery_price)
-          VALUES ($1, $2, $3, $4, $5);
-        `,
-          [
-            orderDetails.rows[0].order_id,
-            cartItems.rows[index].product_id,
-            +cartItems.rows[index].product_price,
-            cartItems.rows[index].quantity,
-            +cartItems.rows[index].delivery_price,
-          ]
-        );
-      })
-    );
-    await executeSql(
-      `
-    DELETE FROM public.bazaar_carts WHERE cart_id = $1;
-    `,
-      [cartId.rows[0].cart_id]
-    );
-    await executeSql(
-      `
-    DELETE FROM public.bazaar_cart_details where cart_id = $1;
-    `,
-      [cartId.rows[0].cart_id]
-    );
-    await executeSql("COMMIT");
-    response = {
-      message: "order generated",
-      status: true,
-      data: orderId,
-    };
-    res.status(201).json(response).end();
-    return;
+    setTimeout(async() => {
+      await Promise.all(
+        cartItems.rows.map(async (value: any, index: number) => {
+          return await executeSql(
+            `
+          INSERT INTO public.bazaar_order_details(
+            order_id, product_id, product_price, quantity, delivery_price)
+            VALUES ($1, $2, $3, $4, $5);
+          `,
+            [
+              orderDetails.rows[0].order_id + '',
+              cartItems.rows[index].product_id,
+              +cartItems.rows[index].product_price,
+              cartItems.rows[index].quantity,
+              +cartItems.rows[index].delivery_price,
+            ]
+          );
+        })
+      );
+      await executeSql(
+        `
+      DELETE FROM public.bazaar_carts WHERE cart_id = $1;
+      `,
+        [cartId.rows[0].cart_id]
+      );
+      await executeSql(
+        `
+      DELETE FROM public.bazaar_cart_details where cart_id = $1;
+      `,
+        [cartId.rows[0].cart_id]
+      );
+      //await executeSql("COMMIT");
+      response = {
+        message: "order generated",
+        status: true,
+        data: orderId,
+      };
+      res.status(201).json(response).end();
+      return;
+    },1500)
   } catch (error: any) {
     console.log(error.message);
     response = {
       message: error.message,
       status: false,
     };
-    await executeSql(`ROLLBACK`);
+    //await executeSql(`ROLLBACK`);
     res.status(406).json(response).end();
     return;
   }

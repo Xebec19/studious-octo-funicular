@@ -5,7 +5,7 @@
             "name":"Debug",
             "type":"node",
             "request": "attach",
-            "program": "${workspaceFolder}/src/index.ts",
+            "program": "${workspaceFolder}/src/server.ts",
             "restart": true,
             "runtimeExecutable": "nodemon",
             "console": "integratedTerminal",
