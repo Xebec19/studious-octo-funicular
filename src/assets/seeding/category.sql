@@ -1,31 +1,31 @@
 INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Non Music','16/11/2021','active');
+  VALUES('Classical','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Latin','16/11/2021','active');
+  VALUES('Country','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Electronic','16/11/2021','active');
+  VALUES('Jazz','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Rock','16/11/2021','active');
+  VALUES('Blues','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Metal','16/11/2021','active');
+  VALUES('Blues','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Rap','16/11/2021','active');
+  VALUES('Reggae','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Hip Hop','16/11/2021','active');
+  VALUES('Rock','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('World','15/11/2021','active');
+  VALUES('World','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Soul','16/11/2021','active');
+  VALUES('Hip Hop','3/11/2022','active');
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
-  VALUES('Jazz','16/11/2021','active');
+  VALUES('Stage And Screen','3/11/2022','active');
   
