@@ -352,7 +352,8 @@ CREATE TABLE public.bazaar_users (
     password character varying NOT NULL,
     created_on timestamp with time zone DEFAULT now(),
     updated_on timestamp with time zone DEFAULT now(),
-    status character varying(10) DEFAULT 'active'::character varying
+    status character varying(10) DEFAULT 'active'::character varying,
+    access varchar(20) default 'user'
 );
 
 
