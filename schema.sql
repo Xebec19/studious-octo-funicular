@@ -1,32 +1,3 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 13.3 (Ubuntu 13.3-1.pgdg18.04+1)
--- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg18.04+1)
-
--- Started on 2021-10-28 21:51:55 IST
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- TOC entry 211 (class 1259 OID 16603)
--- Name: bazaar_cart_details; Type: TABLE; Schema: public; Owner: postgres
---
-
 CREATE TABLE public.bazaar_cart_details (
     cd_id integer NOT NULL,
     cart_id integer,
@@ -36,14 +7,6 @@ CREATE TABLE public.bazaar_cart_details (
     delivery_price numeric
 );
 
-
-ALTER TABLE public.bazaar_cart_details OWNER TO postgres;
-
---
--- TOC entry 210 (class 1259 OID 16601)
--- Name: bazaar_cart_details_cd_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.bazaar_cart_details_cd_id_seq
     AS integer
     START WITH 1
@@ -52,22 +15,8 @@ CREATE SEQUENCE public.bazaar_cart_details_cd_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.bazaar_cart_details_cd_id_seq OWNER TO postgres;
-
---
--- TOC entry 3151 (class 0 OID 0)
--- Dependencies: 210
--- Name: bazaar_cart_details_cd_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.bazaar_cart_details_cd_id_seq OWNED BY public.bazaar_cart_details.cd_id;
 
-
---
--- TOC entry 209 (class 1259 OID 16588)
--- Name: bazaar_carts; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.bazaar_carts (
     cart_id integer NOT NULL,
@@ -79,14 +28,6 @@ CREATE TABLE public.bazaar_carts (
     total numeric
 );
 
-
-ALTER TABLE public.bazaar_carts OWNER TO postgres;
-
---
--- TOC entry 208 (class 1259 OID 16586)
--- Name: bazaar_carts_cart_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.bazaar_carts_cart_id_seq
     AS integer
     START WITH 1
@@ -95,22 +36,9 @@ CREATE SEQUENCE public.bazaar_carts_cart_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.bazaar_carts_cart_id_seq OWNER TO postgres;
-
---
--- TOC entry 3152 (class 0 OID 0)
--- Dependencies: 208
--- Name: bazaar_carts_cart_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.bazaar_carts_cart_id_seq OWNED BY public.bazaar_carts.cart_id;
 
 
---
--- TOC entry 205 (class 1259 OID 16554)
--- Name: bazaar_categories; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.bazaar_categories (
     category_id integer NOT NULL,
@@ -118,14 +46,6 @@ CREATE TABLE public.bazaar_categories (
     created_on timestamp with time zone DEFAULT now(),
     status text
 );
-
-
-ALTER TABLE public.bazaar_categories OWNER TO postgres;
-
---
--- TOC entry 204 (class 1259 OID 16552)
--- Name: bazaar_categories_category_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.bazaar_categories_category_id_seq
     AS integer
@@ -135,22 +55,7 @@ CREATE SEQUENCE public.bazaar_categories_category_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.bazaar_categories_category_id_seq OWNER TO postgres;
-
---
--- TOC entry 3153 (class 0 OID 0)
--- Dependencies: 204
--- Name: bazaar_categories_category_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.bazaar_categories_category_id_seq OWNED BY public.bazaar_categories.category_id;
-
-
---
--- TOC entry 216 (class 1259 OID 25514)
--- Name: bazaar_countries; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.bazaar_countries (
     country_id integer NOT NULL,
@@ -158,14 +63,6 @@ CREATE TABLE public.bazaar_countries (
     currency character varying(10),
     currency_symbol character varying(5)
 );
-
-
-ALTER TABLE public.bazaar_countries OWNER TO postgres;
-
---
--- TOC entry 215 (class 1259 OID 25512)
--- Name: bazaar_countries_country_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
 
 CREATE SEQUENCE public.bazaar_countries_country_id_seq
     AS integer
@@ -175,22 +72,8 @@ CREATE SEQUENCE public.bazaar_countries_country_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.bazaar_countries_country_id_seq OWNER TO postgres;
-
---
--- TOC entry 3154 (class 0 OID 0)
--- Dependencies: 215
--- Name: bazaar_countries_country_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.bazaar_countries_country_id_seq OWNED BY public.bazaar_countries.country_id;
 
-
---
--- TOC entry 212 (class 1259 OID 16746)
--- Name: bazaar_order; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.bazaar_order (
     order_id character varying(20) NOT NULL,
@@ -202,15 +85,6 @@ CREATE TABLE public.bazaar_order (
     email character varying(50) NOT NULL,
     address text NOT NULL
 );
-
-
-ALTER TABLE public.bazaar_order OWNER TO postgres;
-
---
--- TOC entry 214 (class 1259 OID 16759)
--- Name: bazaar_order_details; Type: TABLE; Schema: public; Owner: postgres
---
-
 CREATE TABLE public.bazaar_order_details (
     od_id integer NOT NULL,
     order_id character varying(20),
@@ -220,14 +94,6 @@ CREATE TABLE public.bazaar_order_details (
     delivery_price numeric
 );
 
-
-ALTER TABLE public.bazaar_order_details OWNER TO postgres;
-
---
--- TOC entry 213 (class 1259 OID 16757)
--- Name: bazaar_order_details_od_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.bazaar_order_details_od_id_seq
     AS integer
     START WITH 1
@@ -236,22 +102,7 @@ CREATE SEQUENCE public.bazaar_order_details_od_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.bazaar_order_details_od_id_seq OWNER TO postgres;
-
---
--- TOC entry 3155 (class 0 OID 0)
--- Dependencies: 213
--- Name: bazaar_order_details_od_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.bazaar_order_details_od_id_seq OWNED BY public.bazaar_order_details.od_id;
-
-
---
--- TOC entry 207 (class 1259 OID 16566)
--- Name: bazaar_products; Type: TABLE; Schema: public; Owner: postgres
---
 
 CREATE TABLE public.bazaar_products (
     product_id integer NOT NULL,
@@ -269,14 +120,6 @@ CREATE TABLE public.bazaar_products (
     country_id integer DEFAULT 1
 );
 
-
-ALTER TABLE public.bazaar_products OWNER TO postgres;
-
---
--- TOC entry 206 (class 1259 OID 16564)
--- Name: bazaar_products_product_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.bazaar_products_product_id_seq
     AS integer
     START WITH 1
@@ -284,9 +127,6 @@ CREATE SEQUENCE public.bazaar_products_product_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
-ALTER TABLE public.bazaar_products_product_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3156 (class 0 OID 0)
@@ -310,9 +150,6 @@ CREATE TABLE public.bazaar_tokens (
     last_access timestamp with time zone DEFAULT now()
 );
 
-
-ALTER TABLE public.bazaar_tokens OWNER TO postgres;
-
 --
 -- TOC entry 202 (class 1259 OID 16534)
 -- Name: bazaar_tokens_token_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -326,8 +163,6 @@ CREATE SEQUENCE public.bazaar_tokens_token_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.bazaar_tokens_token_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3157 (class 0 OID 0)
@@ -357,13 +192,6 @@ CREATE TABLE public.bazaar_users (
 );
 
 
-ALTER TABLE public.bazaar_users OWNER TO postgres;
-
---
--- TOC entry 200 (class 1259 OID 16518)
--- Name: bazaar_users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
 CREATE SEQUENCE public.bazaar_users_user_id_seq
     AS integer
     START WITH 1
@@ -373,21 +201,7 @@ CREATE SEQUENCE public.bazaar_users_user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bazaar_users_user_id_seq OWNER TO postgres;
-
---
--- TOC entry 3158 (class 0 OID 0)
--- Dependencies: 200
--- Name: bazaar_users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
 ALTER SEQUENCE public.bazaar_users_user_id_seq OWNED BY public.bazaar_users.user_id;
-
-
---
--- TOC entry 2983 (class 2604 OID 16606)
--- Name: bazaar_cart_details cd_id; Type: DEFAULT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.bazaar_cart_details ALTER COLUMN cd_id SET DEFAULT nextval('public.bazaar_cart_details_cd_id_seq'::regclass);
 
