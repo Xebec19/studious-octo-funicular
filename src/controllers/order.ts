@@ -124,7 +124,9 @@ export const checkout = async (req: Request, res: Response) => {
 export const createOrder = async (req: Request, res: Response) => {
   let response: IResponseData;
   try {
-    const { amount } = req.body;
+    let { amount } = req.body;
+    amount = +amount.toFixed();
+    console.log(amount);
     const options = {
       amount: amount * 100,
       currency: "INR",
