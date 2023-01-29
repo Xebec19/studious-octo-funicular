@@ -5,9 +5,9 @@
   "main": "build/server.js",
   "scripts": {
     "test": "jest --config=src/jest.config.js",
-    "build": "rimraf build && npx tsc",
+    "build": "rimraf build && npx tsc && cp .env build/",
     "start:dev": "nodemon",
-    "start": "rimraf build && npx tsc && node build/server.js",
+    "start": "npm run build && node build/server.js",
     "create-database": "sudo psql -U postgres < schema.sql",
     "seed": "ts-node ./src/server.ts --seed=true"
   },
