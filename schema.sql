@@ -432,6 +432,8 @@ ALTER TABLE ONLY public.bazaar_carts
 ALTER TABLE ONLY public.bazaar_tokens
     ADD CONSTRAINT fk_usertoken FOREIGN KEY (user_id) REFERENCES public.bazaar_users(user_id) ON DELETE CASCADE;
 
+insert into bazaar_countries(country_name,currency,currency_symbol)
+values('India','Rupee','₹');
 
 -- Completed on 2021-10-28 21:51:55 IST
 

@@ -28,4 +28,7 @@ INSERT INTO bazaar_categories
   INSERT INTO bazaar_categories
   (category_name, created_on, status)
   VALUES('Stage And Screen','3/11/2022','active');
+   INSERT INTO bazaar_categories
+  (category_name, created_on, status)
+  VALUES('Hip Hop','3/11/2022','active');
   
